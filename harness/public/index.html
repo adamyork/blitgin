@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>title</title>
+        <script src='blitgin.js'></script>
+        <script>
+            const { has_wait_for } = wasm_bindgen;
+            async function run() {
+                await wasm_bindgen('blitgin_bg.wasm');
+                let val = has_wait_for('hi');
+                console.log(val);
+            }
+            run();
+        </script>
+    </head>
+    <body>
+    </body>
+</html>
