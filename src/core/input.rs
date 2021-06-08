@@ -24,13 +24,22 @@ impl Input {
             custom_key: 0,
         }
     }
-    pub fn has_waits_for(&self, key: String) -> bool {
-        if &self.waits.clone().contains_key(&key) == &true {
-            return true
-        }
-        false
+    pub fn has_waits_for(&self, key: &str) -> bool {
+        self.waits.contains_key(key)
     }
     pub fn add_wait_for_action(&mut self, key: String, duration: i32) {
-        let _ = &self.waits.insert(key, duration);
+        &self.waits.insert(key, duration);
+        return;
     }
+}
+
+#[derive(Debug)]
+pub struct Keyboard {}
+
+impl Keyboard {
+    const KEY_UP: &'static str = "keyup";
+    const KEY_DOWN: &'static str = "keydown";
+    const LEFT: i32 = 65;
+    const RIGHT: i32 = 68;
+    const SPACE: i32 = 32;
 }

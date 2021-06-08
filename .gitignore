@@ -2,3 +2,4 @@
 Cargo.lock
 reference/
 harness/node_modules/
+.idea/
