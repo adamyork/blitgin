@@ -113,6 +113,30 @@ __exports.has_wait_for = function(key) {
     return ret !== 0;
 };
 
+class GameError {
+
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_gameerror_free(ptr);
+    }
+    /**
+    * @param {string} message
+    */
+    static warn(message) {
+        var ptr0 = passStringToWasm0(message, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.gameerror_warn(ptr0, len0);
+    }
+}
+__exports.GameError = GameError;
+
 async function load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
         if (typeof WebAssembly.instantiateStreaming === 'function') {
