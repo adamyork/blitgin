@@ -29,29 +29,9 @@ pub fn has_wait_for(key: &str) -> bool {
     if input.has_waits_for(key) {
         debug!("in the if true");
         let mut render_obj = RenderObject {
-            transparency: false,
-            show_bounds: false,
             color_constant:String::from("someValue").into_boxed_str(),
-            workbench: None,
-            x: 0,
-            y: 0,
-            original_x: 0,
-            original_y: 0,
-            width: 0,
-            height: 0,
-            duration: 0,
-            frame: 0,
-            frame_buffer: 0,
-            velocity_x: 0,
-            velocity_y: 0,
-            ease_coefficient: 0,
-            index: 0,
-            life_span: 0,
-            cell_width: 0,
-            cell_height: 0,
-            direction: 0,
             asset_class: String::from("someValue").into_boxed_str(),
-            keyframe_len: 0
+            ..Default::default()
         };
         let result = render_obj.init();
         if result.is_ok() {
