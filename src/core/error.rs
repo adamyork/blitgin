@@ -1,6 +1,7 @@
 use wasm_bindgen::prelude::*;
 use web_sys::console;
 
+#[derive(Debug)]
 pub struct GameError {}
 
 #[wasm_bindgen]
