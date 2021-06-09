@@ -1,5 +1,7 @@
+use log::*;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
+use web_sys::{Document, HtmlImageElement, Element};
 
 pub struct RenderObject {
     pub transparency: bool,
@@ -35,10 +37,37 @@ pub struct RenderObject {
 
 impl RenderObject {
     pub fn init(&mut self) -> Result<(), JsValue> {
-        let document = web_sys::window().unwrap().document().unwrap();
-        self.workbench = Some(document
-            .create_element("canvas")?
-            .dyn_into::<web_sys::HtmlCanvasElement>()?);
+        debug!("init called");
+        let document: Document = web_sys::window().unwrap().document().unwrap();
+        debug!("document created");
+        self.workbench = Some(
+            document
+                .create_element("canvas")?
+                .dyn_into::<web_sys::HtmlCanvasElement>()?,
+        );
+        debug!("workbench created");
+        let result:Result<Element, JsValue> = document.create_element("image");
+        if result.is_ok() {
+            debug!("image created");
+            let next_result = result.unwrap().dyn_into::<web_sys::HtmlImageElement>();
+            if next_result.is_ok() {
+                debug!("image finished");
+            } else {
+                debug!("image finished failed");
+            }
+        } else {
+            debug!("image failed");
+        }
+        // let image: HtmlImageElement = document
+        //     .create_element("image")?
+        //     .dyn_into::<web_sys::HtmlImageElement>()?;
+        // debug!("image created");
+        // image.set_src(&self.asset_class);
+        // debug!("image src assigned");
+        // let p: Result<::js_sys::Promise, JsValue> = web_sys::window()
+        //     .unwrap()
+        //     .create_image_bitmap_with_html_image_element(&image);
+        // debug!("bitmap created");
         // @asset = new Image()
         // @assetData = new Image()
         // @asset.onload = @assetLoadComplete.bind this
@@ -52,7 +81,7 @@ impl Default for RenderObject {
         RenderObject {
             transparency: false,
             show_bounds: false,
-            color_constant:String::from("default").into_boxed_str(),
+            color_constant: String::from("default").into_boxed_str(),
             workbench: None,
             x: 0,
             y: 0,
@@ -71,7 +100,7 @@ impl Default for RenderObject {
             cell_width: 0,
             cell_height: 0,
             direction: 0,
-            asset_class: String::from("default").into_boxed_str(),
+            asset_class: String::from("test.png").into_boxed_str(),
             keyframe_len: 0,
         }
     }

@@ -42,3 +42,7 @@ pub fn has_wait_for(key: &str) -> bool {
     debug!("false");
     false
 }
+
+fn init_complete() {
+    debug!("init complete");
+}
