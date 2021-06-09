@@ -1,7 +1,7 @@
 use log::*;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::{Document, HtmlImageElement, Element};
+use web_sys::{Document, HtmlImageElement, Element, Window};
 
 pub struct RenderObject {
     pub transparency: bool,
@@ -38,7 +38,7 @@ pub struct RenderObject {
 impl RenderObject {
     pub fn init(&mut self) -> Result<(), JsValue> {
         debug!("init called");
-        let document: Document = web_sys::window().unwrap().document().unwrap();
+        let document: Document = web_sys::window().expect("No Window").document().expect("No Document");
         debug!("document created");
         self.workbench = Some(
             document
@@ -53,10 +53,12 @@ impl RenderObject {
             if next_result.is_ok() {
                 debug!("image finished");
             } else {
-                debug!("image finished failed");
+                let e = next_result.unwrap_err();
+                error!("image finished failed {:?}", e);
             }
         } else {
-            debug!("image failed");
+            let e = result.unwrap_err();
+            error!("image failed {:?}", e);
         }
         // let image: HtmlImageElement = document
         //     .create_element("image")?
