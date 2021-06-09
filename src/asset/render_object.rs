@@ -46,7 +46,7 @@ impl RenderObject {
                 .dyn_into::<web_sys::HtmlCanvasElement>()?,
         );
         debug!("workbench created");
-        let result:Result<Element, JsValue> = document.create_element("image");
+        let result:Result<Element, JsValue> = document.create_element("img");
         if result.is_ok() {
             debug!("image created");
             let next_result = result.unwrap().dyn_into::<web_sys::HtmlImageElement>();
