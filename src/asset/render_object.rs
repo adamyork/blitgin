@@ -1,7 +1,7 @@
 use log::*;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::{Document, HtmlImageElement, Element, Window};
+use web_sys::{Document, Element, HtmlImageElement, Window};
 
 pub struct RenderObject {
     pub transparency: bool,
@@ -36,9 +36,12 @@ pub struct RenderObject {
 }
 
 impl RenderObject {
-    pub fn init(&mut self) -> Result<(), JsValue> {
+    pub async fn init(&mut self) -> Result<(), JsValue> {
         debug!("init called");
-        let document: Document = web_sys::window().expect("No Window").document().expect("No Document");
+        let document: Document = web_sys::window()
+            .expect("No Window")
+            .document()
+            .expect("No Document");
         debug!("document created");
         self.workbench = Some(
             document
@@ -46,30 +49,34 @@ impl RenderObject {
                 .dyn_into::<web_sys::HtmlCanvasElement>()?,
         );
         debug!("workbench created");
-        let result:Result<Element, JsValue> = document.create_element("img");
-        if result.is_ok() {
-            debug!("image created");
-            let next_result = result.unwrap().dyn_into::<web_sys::HtmlImageElement>();
-            if next_result.is_ok() {
-                debug!("image finished");
-            } else {
-                let e = next_result.unwrap_err();
-                error!("image finished failed {:?}", e);
-            }
-        } else {
-            let e = result.unwrap_err();
-            error!("image failed {:?}", e);
-        }
-        // let image: HtmlImageElement = document
-        //     .create_element("image")?
-        //     .dyn_into::<web_sys::HtmlImageElement>()?;
-        // debug!("image created");
-        // image.set_src(&self.asset_class);
-        // debug!("image src assigned");
-        // let p: Result<::js_sys::Promise, JsValue> = web_sys::window()
-        //     .unwrap()
-        //     .create_image_bitmap_with_html_image_element(&image);
-        // debug!("bitmap created");
+        // let result: Result<Element, JsValue> = document.create_element("img");
+        // if result.is_ok() {
+        //     debug!("image created");
+        //     let next_result = result.unwrap().dyn_into::<web_sys::HtmlImageElement>();
+        //     if next_result.is_ok() {
+        //         debug!("image finished");
+        //     } else {
+        //         let e = next_result.unwrap_err();
+        //         error!("image finished failed {:?}", e);
+        //     }
+        // } else {
+        //     let e = result.unwrap_err();
+        //     error!("image failed {:?}", e);
+        // }
+        let image: HtmlImageElement = document
+            .create_element("img")?
+            .dyn_into::<web_sys::HtmlImageElement>()?;
+        debug!("image created");
+        image.set_src(&self.asset_class);
+        debug!("image src assigned");
+        let result = wasm_bindgen_futures::JsFuture::from(
+            web_sys::window()
+                .unwrap()
+                .create_image_bitmap_with_html_image_element(&image)?,
+        )
+        .await?
+        .dyn_into::<web_sys::ImageBitmap>()?;
+        debug!("bitmap created");
         // @asset = new Image()
         // @assetData = new Image()
         // @asset.onload = @assetLoadComplete.bind this

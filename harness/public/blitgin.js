@@ -238,6 +238,10 @@ async function init(input) {
         var ret = getObject(arg0).document;
         return isLikeNone(ret) ? 0 : addHeapObject(ret);
     };
+    imports.wbg.__wbg_createImageBitmap_a225cee58907873f = function() { return handleError(function (arg0, arg1) {
+        var ret = getObject(arg0).createImageBitmap(getObject(arg1));
+        return addHeapObject(ret);
+    }, arguments) };
     imports.wbg.__wbg_createElement_ac65a6ce60c4812c = function() { return handleError(function (arg0, arg1, arg2) {
         var ret = getObject(arg0).createElement(getStringFromWasm0(arg1, arg2));
         return addHeapObject(ret);
@@ -263,6 +267,9 @@ async function init(input) {
     imports.wbg.__wbg_instanceof_HtmlImageElement_96a352fc82f5e47b = function(arg0) {
         var ret = getObject(arg0) instanceof HTMLImageElement;
         return ret;
+    };
+    imports.wbg.__wbg_setsrc_be485ebb2fd85e29 = function(arg0, arg1, arg2) {
+        getObject(arg0).src = getStringFromWasm0(arg1, arg2);
     };
     imports.wbg.__wbg_instanceof_HtmlCanvasElement_fd3cbbe3906d7792 = function(arg0) {
         var ret = getObject(arg0) instanceof HTMLCanvasElement;

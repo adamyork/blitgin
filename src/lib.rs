@@ -30,7 +30,7 @@ pub fn has_wait_for(key: &str) -> bool {
         debug!("in the if true");
         let mut render_obj = RenderObject {
             color_constant:String::from("someValue").into_boxed_str(),
-            asset_class: String::from("someValue").into_boxed_str(),
+            asset_class: String::from("test.png").into_boxed_str(),
             ..Default::default()
         };
         let result = render_obj.init();
