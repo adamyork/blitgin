@@ -46,3 +46,33 @@ impl RenderObject {
         Ok(())
     }
 }
+
+impl Default for RenderObject {
+    fn default() -> Self {
+        RenderObject {
+            transparency: false,
+            show_bounds: false,
+            color_constant:String::from("default").into_boxed_str(),
+            workbench: None,
+            x: 0,
+            y: 0,
+            original_x: 0,
+            original_y: 0,
+            width: 0,
+            height: 0,
+            duration: 0,
+            frame: 0,
+            frame_buffer: 0,
+            velocity_x: 0,
+            velocity_y: 0,
+            ease_coefficient: 0,
+            index: 0,
+            life_span: 0,
+            cell_width: 0,
+            cell_height: 0,
+            direction: 0,
+            asset_class: String::from("default").into_boxed_str(),
+            keyframe_len: 0,
+        }
+    }
+}

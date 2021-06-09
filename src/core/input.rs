@@ -1,9 +1,8 @@
-use std::collections::hash_map::RandomState;
 use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct Input {
-    pub waits: HashMap<String, i32, RandomState>,
+    pub waits: HashMap<String, i32>,
     pub disabled: bool,
     pub direction: i32,
     pub v_direction: i32,
@@ -28,8 +27,15 @@ impl Input {
         self.waits.contains_key(key)
     }
     pub fn add_wait_for_action(&mut self, key: String, duration: i32) {
-        &self.waits.insert(key, duration);
+        self.waits.insert(key, duration);
         return;
+    }
+}
+
+
+impl Default for Input {
+    fn default() -> Self {
+        Input::new()
     }
 }
 
