@@ -1,23 +1,33 @@
 use crate::core::error::GameError;
 use crate::core::input::Input;
+
+#[cfg(feature = "console_error_panic_hook")]
+use std::panic;
+
 use wasm_bindgen::prelude::*;
-use web_sys::console;
+use log::*;
 use crate::asset::render_object::RenderObject;
 
 pub mod asset;
 pub mod core;
 
-#[no_mangle]
+#[wasm_bindgen(start)]
+pub fn init_hook() {
+    #[cfg(feature = "console_error_panic_hook")]
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+    console_log::init_with_level(Level::Debug).expect("error initializing log");
+}
+
 #[wasm_bindgen]
 pub fn has_wait_for(key: &str) -> bool {
-    console::log_1(&"has wait for called".into());
-    let mut input = Input::new();
-    console::log_1(&"new input created".into());
+    debug!("has wait for called");
+    let mut input: Input = Default::default();
+    debug!("new input created");
     input.add_wait_for_action(String::from(key), 32);
-    console::log_1(&"wait for action called".into());
+    debug!("wait for action called");
     GameError::warn(&"some message");
-    if input.has_waits_for(key) == true {
-        console::log_1(&"in the if true".into());
+    if input.has_waits_for(key) {
+        debug!("in the if true");
         let mut render_obj = RenderObject {
             transparency: false,
             show_bounds: false,
@@ -45,10 +55,10 @@ pub fn has_wait_for(key: &str) -> bool {
         };
         let result = render_obj.init();
         if result.is_ok() {
-            console::log_1(&"result is true".into());
+            debug!("result is true");
         }
-        return true;
+        return true
     }
-    console::log_1(&"false".into());
+    debug!("false");
     false
 }
