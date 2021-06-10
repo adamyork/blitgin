@@ -1,7 +1,9 @@
+use futures::future::FutureExt;
+use futures::TryFutureExt;
 use log::*;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::{Document, Element, HtmlImageElement, Window};
+use web_sys::{Document, Element, HtmlImageElement, Window, CanvasRenderingContext2d};
 
 pub struct RenderObject {
     pub transparency: bool,
@@ -27,16 +29,16 @@ pub struct RenderObject {
     pub cell_height: i32,
     pub direction: i32,
     pub asset_class: Box<str>,
-    // asset = {},
-    // asset_data = {},
-    // ctx = {},
+    pub asset:Option<web_sys::HtmlImageElement>,
+    pub asset_data:Option<web_sys::HtmlImageElement>,
+    pub ctx: Option<web_sys::CanvasRenderingContext2d>,
     // callback = undefined,
     // collision_pixels = [],
     pub keyframe_len: i32,
 }
 
 impl RenderObject {
-    pub async fn init(&mut self) -> Result<(), JsValue> {
+    pub fn init(&mut self) -> Result<(), JsValue> {
         debug!("init called");
         let document: Document = web_sys::window()
             .expect("No Window")
@@ -69,18 +71,29 @@ impl RenderObject {
         debug!("image created");
         image.set_src(&self.asset_class);
         debug!("image src assigned");
-        let result = wasm_bindgen_futures::JsFuture::from(
+        let f = wasm_bindgen_futures::JsFuture::from(
             web_sys::window()
                 .unwrap()
                 .create_image_bitmap_with_html_image_element(&image)?,
         )
-        .await?
-        .dyn_into::<web_sys::ImageBitmap>()?;
+        .map(|x| ());
+        wasm_bindgen_futures::spawn_local(f);
         debug!("bitmap created");
-        // @asset = new Image()
-        // @assetData = new Image()
-        // @asset.onload = @assetLoadComplete.bind this
-        // @asset.src = @assetClass
+        self.ctx = Some(self.workbench
+            .to_owned()
+            .unwrap()
+            .get_context("2d")
+            .unwrap()
+            .unwrap()
+            .dyn_into::<web_sys::CanvasRenderingContext2d>()
+            .unwrap());
+        debug!("context retrieved");
+        self.keyframe_len = 0;
+        if self.transparency || (!self.transparency && self.show_bounds) {
+            self.asset_data = self.asset.clone();
+        } else {
+            //@removeColorConstantAndCache @asset,@assetDat
+        }
         Ok(())
     }
 }
@@ -110,6 +123,9 @@ impl Default for RenderObject {
             cell_height: 0,
             direction: 0,
             asset_class: String::from("test.png").into_boxed_str(),
+            asset: None,
+            asset_data: None,
+            ctx: None,
             keyframe_len: 0,
         }
     }
